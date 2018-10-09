@@ -1,0 +1,27 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mysql-deployment
+  namespace: mysql-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      application: mysql
+  template:
+    metadata:
+      name: mysql-server
+      labels:
+        application: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:latest
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: mysql_root_password
+        ports:
+          - containerPort: 3306
