@@ -3,8 +3,7 @@ kind: Service
 metadata:
   name: mysql-service
   labels:
-    name: mysql-pod
-    context: docker-k8s-lab
+    application: mysql
 spec:
   type: NodePort
   ports:
@@ -12,5 +11,4 @@ spec:
     - port: 3306
   # label keys and values that must match in order to receive traffic for this service
   selector:
-    name: mysql-pod
-    context: docker-k8s-lab
+    application: mysql
