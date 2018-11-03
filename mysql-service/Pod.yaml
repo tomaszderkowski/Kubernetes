@@ -8,7 +8,8 @@ metadata:
 spec:
   containers:
     - name: mysql
-      image: mysql:latest
+      image: mysql
+      imagePullPolicy: Always
       env:
         - name: "MYSQL_ROOT_PASSWORD"
           valueFrom:
@@ -17,3 +18,10 @@ spec:
               key: mysql_root_password
       ports:
         - containerPort: 3306
+      volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+  volumes:
+    - name: mysql-storage
+      persistentVolumeClaim:
+        claimName: mysql-pv-claim
