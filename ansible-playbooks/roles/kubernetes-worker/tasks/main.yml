@@ -1,0 +1,5 @@
+---
+- name: join cluster
+  shell: "{{ hostvars[groups['masters'][0]].join_command }}"
+  args:
+    chdir: $HOME
