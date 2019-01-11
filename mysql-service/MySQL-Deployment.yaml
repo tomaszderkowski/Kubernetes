@@ -1,0 +1,58 @@
+kind: Deployment
+apiVersion: apps/v1beta2
+metadata:
+  namespace: mysql
+  name: mysql-server
+  labels:
+    application: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      application: mysql
+  template:
+    metadata:
+      labels:
+        application: mysql
+    spec:
+      dnsConfig:
+        options:
+        - name: use-vc
+      containers:
+        - name: mysql
+          image: mysql:5
+          imagePullPolicy: Always
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: mysql_root_password
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-storage
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: mysql
+  labels:
+    application: mysql
+spec:
+  type: NodePort
+  ports:
+    - port: 3306
+      nodePort: 32060
+      targetPort: 3306
+  selector:
+    application: mysql
