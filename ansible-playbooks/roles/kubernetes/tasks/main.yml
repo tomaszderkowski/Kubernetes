@@ -1,0 +1,17 @@
+---
+- name: Install kubelet
+  yum:
+    name: kubelet
+    state: present
+    update_cache: true
+
+- name: Install kubeadm
+  yum:
+    name: kubeadm
+    state: present
+
+- name: Start kubelet
+  service:
+    name: kubelet
+    enabled: yes
+    state: started

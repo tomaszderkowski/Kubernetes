@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus
+data:
+  prometheus.yml: |-
+    global:
+      scrape_interval: 5s
+    scrape_configs:
+    # etcd is living outside of our cluster and we configure
+    # it directly.
+    - job_name: 'nodes'
+      target_groups:
+      - targets:
+        - 192.168.1.120:9100
+        - 192.168.1.121:9100

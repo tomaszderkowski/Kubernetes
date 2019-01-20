@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: monitoring
+  name: node-exporter
+  labels:
+    tier: node-exporter
+    application: prometheus
+spec:
+  clusterIP: None
+  ports:
+  - name: scrape
+    port: 9100
+    protocol: TCP
+  selector:
+    tier: node-exporter
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  namespace: monitoring
+  name: node-exporter
+  labels:
+    tier: node-exporter
+    application: prometheus
+spec:
+  template:
+    metadata:
+      labels:
+        tier: node-exporter
+        application: prometheus
+    spec:
+      containers:
+      - name: node-exporter
+        image: prom/node-exporter
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9100
+          hostPort: 9100
+          name: scrape
+      hostNetwork: true
+      hostPID: true
