@@ -3,22 +3,20 @@
   yum:
     name: http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     state: present
+    use_backend: yum
 
 - name: Upgrade OS
   yum:
     name: '*'
     state: latest
     update_cache: true
-
-- name: Install network managment packages
-  yum:
-    name: python-gobject, NetworkManager-glib, net-tools
-    state: installed
+    use_backend: yum
 
 - name: Install tools 
   yum:
-    name: net-tools, htop, iotop, vim, nano, mc
+    name: net-tools, htop, iotop, vim, nano, mc, firewalld, sudo, nfs-utils
     state: installed
+    use_backend: yum
 
 - name: Change Hostname
   hostname:
@@ -34,6 +32,7 @@
   yum:
     name: ntp
     state: present
+    use_backend: yum
 
 - name: Start NTP
   service: 
@@ -41,33 +40,15 @@
     enabled: yes
     state: started
 
-- name: Setup Network Adapter
-  nmcli:
-    conn_name: eth1
-    autoconnect: yes
-    ifname: eth1
-    type: ethernet
-    ip4: "{{ ansible_host }}"
-    gw4: "{{ gateway }}"
-    dns4: "{{ dns }}"
-    state: present
-
-- name: Add IP address of all hosts to host file
-  lineinfile:
-    dest: /etc/hosts
-    line: "{{ hostvars[item].ansible_host }} {{ hostvars[item].hostname }}"
-    state: present
-  with_items: "{{ groups.all }}"
-
-- name: disable SELinux
-  command: setenforce 0
-
-- name: disable SELinux on reboot
+- name: Check if SELinux is installed
+  stat: 
+    path: /etc/selinux/config
+  register: selinux_config_file
+    
+- name: Disable SELinux on reboot
   selinux:
     state: disabled
-
-- name: Disable swap
-  command: swapoff -a
+  when: selinux_config_file.stat.exists
 
 - name: Remove swapfile from /etc/fstab
   mount:
@@ -78,16 +59,16 @@
     - swap
     - none
 
-- name: Enable bridge-nf-call tables
-  sysctl:
-    name: "{{ item }}"
-    state: present
-    value: 1
-    reload: yes
-  with_items:
-    - net.bridge.bridge-nf-call-iptables
-    - net.bridge.bridge-nf-call-arptables
-    - net.bridge.bridge-nf-call-ip6tables
+# - name: Enable bridge-nf-call tables
+#   sysctl:
+#     name: "{{ item }}"
+#     state: present
+#     value: 1
+#     reload: yes
+#   with_items:
+#     - net.bridge.bridge-nf-call-iptables
+#     - net.bridge.bridge-nf-call-arptables
+#     - net.bridge.bridge-nf-call-ip6tables
 
 - name: Add Kubernetes YUM repository
   yum_repository:

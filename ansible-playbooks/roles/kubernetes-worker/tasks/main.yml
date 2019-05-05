@@ -1,5 +1,9 @@
 ---
+- name: Revert kubeadm changes
+  become: yes
+  shell: kubeadm reset --force
+
 - name: join cluster
-  shell: "{{ hostvars[groups['masters'][0]].join_command }}"
+  shell: "{{ hostvars[groups['masters'][0]].join_command }} --ignore-preflight-errors=Swap,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,SystemVerification"
   args:
     chdir: $HOME

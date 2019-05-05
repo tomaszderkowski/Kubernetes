@@ -1,6 +1,6 @@
 ---
 - name: Install Kubernetes Dashboard
-  shell: kubectl create -f https://raw.githubusercontent.com/justmeandopensource/kubernetes/master/dashboard/dashboard.yaml
+  shell: kubectl create -f ../infrastructure/kubernetes-dashboard/deployment.yml
 
 - name: Add user and cluster role
-  shell: kubectl create -f https://raw.githubusercontent.com/justmeandopensource/kubernetes/master/dashboard/sa_cluster_admin.yaml
+  shell: kubectl create -f ../infrastructure/kubernetes-dashboard/rbac.yml

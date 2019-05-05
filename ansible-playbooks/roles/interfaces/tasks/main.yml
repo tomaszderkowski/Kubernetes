@@ -1,0 +1,24 @@
+---
+- name: Install network managment packages
+  yum:
+    name: python-gobject, NetworkManager-glib, net-tools
+    state: installed
+    use_backend: yum
+
+- name: Setup Network Adapter
+  nmcli:
+    conn_name: eth1
+    autoconnect: yes
+    ifname: eth1
+    type: ethernet
+    ip4: "{{ ansible_host }}"
+    gw4: "{{ gateway }}"
+    dns4: "{{ dns }}"
+    state: present
+
+- name: Add IP address of all hosts to host file
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item].ansible_host }} {{ hostvars[item].hostname }}"
+    state: present
+  with_items: "{{ groups.all }}"

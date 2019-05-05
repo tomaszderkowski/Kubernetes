@@ -1,15 +1,16 @@
 [masters]
-master ansible_host=192.168.1.120 hostname=kubernetes-master
+master ansible_host=10.69.185.130 hostname=kubernetes-master
 
 [workers]
-worker1 ansible_host=192.168.1.121 hostname=kubernetes-worker1
+worker1 ansible_host=10.69.185.229 hostname=kubernetes-worker1
+worker2 ansible_host=10.69.185.105 hostname=kubernetes-worker2
 
 [cluster:children]
 masters
 workers
 
 [cluster:vars]
-ansible_user=vagrant
+ansible_user=root
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 gateway=192.168.1.1
 dns=8.8.8.8
