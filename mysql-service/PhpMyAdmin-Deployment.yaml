@@ -6,7 +6,7 @@ metadata:
   labels:
     application: phpmyadmin
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       application: phpmyadmin
@@ -15,9 +15,6 @@ spec:
       labels:
         application: phpmyadmin
     spec:
-      dnsConfig:
-        options:
-        - name: use-vc
       containers:
         - name: phpmyadmin
           image: bitnami/phpmyadmin:latest
@@ -46,10 +43,9 @@ metadata:
   labels:
     application: phpmyadmin
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 80
-      nodePort: 32080
       targetPort: 80
   selector:
     application: phpmyadmin
