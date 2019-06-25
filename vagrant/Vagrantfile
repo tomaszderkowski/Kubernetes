@@ -1,41 +1,22 @@
-ENV['VAGRANT_PARALLEL'] = 'yes'
+box_image = "ubuntu/bionic64"
+box_cpu = 2
+box_ram = "4096"
+box_name = "kubernetes"
+box_network_type = "public_network"
+box_ip = "192.168.1.120"
+box_bridge_interface = "wlan0"
 
-bridge_adapter = "wlan0"
-box_image = "centos/7"
-
-Vagrant.configure("2") do |config|
-
-  config.vm.provision "shell", path: "bootstrap.sh"
-
-  config.vm.define "kubernetes-master" do |master|
-    master.vm.box = box_image
-    master.vm.network "public_network", ip: "192.168.1.120", bridge: bridge_adapter
-    master.vm.hostname  = "kubernetes-master"
-    master.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
-    master.ssh.private_key_path = ["~/.ssh/id_rsa", "~/.vagrant.d/insecure_private_key"]
-    master.ssh.insert_key = false
-    master.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"
-      vb.name = "kubernetes-master"
-      vb.cpus = 2
-    end
+Vagrant.configure(2) do |config|
+  config.vm.box = box_image
+  config.vm.network box_network_type, ip: box_ip, bridge: box_bridge_interface
+  config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = box_ram
+    vb.cpus = box_cpu
+    vb.name = box_name
   end
-
-  NodeCount = 1
-
-  (1..NodeCount).each do |i|
-    config.vm.define "kubernetes-worker#{i}" do |worker|
-      worker.vm.box = box_image
-      worker.vm.network "public_network", ip: "192.168.1.12#{i}", bridge: bridge_adapter
-      worker.vm.hostname = "kubernetes-worker#{i}"
-      worker.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
-      worker.ssh.private_key_path = ["~/.ssh/id_rsa", "~/.vagrant.d/insecure_private_key"]
-      worker.ssh.insert_key = false
-      worker.vm.provider "virtualbox" do |vb|
-        vb.memory = "2048"
-        vb.name = "kubernetes-worker#{i}"
-        vb.cpus = 1
-      end
-    end
-  end
+  config.vm.provision "shell", inline: <<-SHELL
+    apt update 
+    apt upgrade -y
+  SHELL
 end
