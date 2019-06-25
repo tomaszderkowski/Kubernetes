@@ -1,3 +1,4 @@
+box_hostname = "kubernetes"
 box_image = "ubuntu/bionic64"
 box_cpu = 2
 box_ram = "4096"
@@ -8,6 +9,7 @@ box_bridge_interface = "wlan0"
 
 Vagrant.configure(2) do |config|
   config.vm.box = box_image
+  config.vm.hostname = box_hostname
   config.vm.network box_network_type, ip: box_ip, bridge: box_bridge_interface
   config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
   config.vm.provider "virtualbox" do |vb|
@@ -16,7 +18,8 @@ Vagrant.configure(2) do |config|
     vb.name = box_name
   end
   config.vm.provision "shell", inline: <<-SHELL
-    apt update 
-    apt upgrade -y
+    apt-get update 
+    apt-get install python -y
+    sudo apt dist-upgrade -y
   SHELL
 end
