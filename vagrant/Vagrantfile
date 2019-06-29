@@ -17,9 +17,4 @@ Vagrant.configure(2) do |config|
     vb.cpus = box_cpu
     vb.name = box_name
   end
-  config.vm.provision "shell", inline: <<-SHELL
-    apt-get update 
-    apt-get install python -y
-    sudo apt dist-upgrade -y
-  SHELL
 end
