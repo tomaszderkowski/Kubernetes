@@ -3,42 +3,58 @@
   yum:
     name: http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     state: present
-    use_backend: yum
 
 - name: Upgrade OS
   yum:
     name: '*'
     state: latest
     update_cache: true
-    use_backend: yum
 
 - name: Install tools 
   yum:
-    name: net-tools, htop, iotop, vim, nano, mc, firewalld, sudo, nfs-utils
+    name: "{{ packages }}"
     state: installed
-    use_backend: yum
+  vars:
+    packages:
+    - yum-utils
+    - net-tools
+    - htop
+    - iotop
+    - vim
+    - nano
+    - mc
+    - sudo
+    - nfs-utils
+    - device-mapper-persistent-data
+    - lvm2
+    - which
 
 - name: Change Hostname
   hostname:
     name: "{{ hostname }}"
+
+- name: Check if Firewalld Exists
+  stat: path=/etc/firewalld/firewalld.conf
+  register: service_status
 
 - name: Stop firewall
   service: 
     name: firewalld
     enabled: no
     state: stopped
+  when: service_status.stat.exists
+  register: service_stopped
      
 - name: Install NTP
   yum:
     name: ntp
     state: present
-    use_backend: yum
 
 - name: Start NTP
   service: 
     name: ntpd
-    enabled: yes
     state: started
+    enabled: yes
 
 - name: Check if SELinux is installed
   stat: 
@@ -69,11 +85,3 @@
 #     - net.bridge.bridge-nf-call-iptables
 #     - net.bridge.bridge-nf-call-arptables
 #     - net.bridge.bridge-nf-call-ip6tables
-
-- name: Add Kubernetes YUM repository
-  yum_repository:
-    name: Kubernetes
-    description: Kubernetes YUM repository
-    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-    gpgcheck: yes

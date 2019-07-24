@@ -50,7 +50,7 @@ cluster: null
 ```
 
 ## lxc image
-```lxc image list``` - wskazuje wszystkie obrazy systemów dostępne na maszynie loklanej
+```lxc image list``` - wskazuje wszystkie obrazy systemów dostępne na maszynie lokalnej
 
 ```lxc image list <nazwa_repozytorium>:``` - wyszukuje wszystkie obrazy systemów w danym repozytorium
 

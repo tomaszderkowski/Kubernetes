@@ -1,11 +1,16 @@
----  
+---
+- name: Check if kubeadm was inicialized
+  stat: path=/etc/kubernetes/manifests/kube-apiserver.yaml
+  register: kubeadm_status
+
 - name: Revert kubeadm changes
   become: yes
   shell: kubeadm reset --force
+  when: kubeadm_status.stat.exists
 
 - name: Initialize the cluster
   become: yes
-  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=Swap,IsPrivilegedUser,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,SystemVerification --apiserver-advertise-address={{ hostvars[groups['masters'][0]].ansible_host }}
+  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=Swap,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,SystemVerification --apiserver-advertise-address={{ hostvars[groups['masters'][0]].ansible_host }}
   args:
     chdir: $HOME
 
@@ -34,7 +39,7 @@
 
 - name: Install Pod network
   become_user: "{{ ansible_user }}"
-  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/bc79dd1505b0c8681ece4de4c0d86c5cd2643275/Documentation/kube-flannel.yml
+  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
   args:
     chdir: $HOME
     creates: pod_network_setup.txt

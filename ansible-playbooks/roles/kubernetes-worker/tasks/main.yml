@@ -1,7 +1,12 @@
 ---
+- name: Check if kubeadm was inicialized
+  stat: path=/etc/kubernetes/manifests/kube-apiserver.yaml
+  register: kubeadm_status
+
 - name: Revert kubeadm changes
   become: yes
   shell: kubeadm reset --force
+  when: kubeadm_status.stat.exists
 
 - name: join cluster
   shell: "{{ hostvars[groups['masters'][0]].join_command }} --ignore-preflight-errors=Swap,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,SystemVerification"

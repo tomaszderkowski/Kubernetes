@@ -1,21 +1,31 @@
 ---
+- name: Add Kubernetes YUM repository
+  yum_repository:
+    name: Kubernetes
+    description: Kubernetes YUM repository
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    gpgcheck: yes
+    enabled: yes
+    state: present
+
 - name: Install kubelet
   yum:
-    name: kubelet
+    name: "{{ packages }}"
     state: present
     update_cache: true
+  vars:
+    packages:
+    - kubeadm-1.14.3
+    - kubelet-1.14.3
+    - kubectl-1.14.3
 
 - name: Disable fail SWAP in kubelet
   become: yes
   shell: echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/sysconfig/kubelet
 
-- name: Install kubeadm
-  yum:
-    name: kubeadm
-    state: present
-
-- name: Start kubelet
+- name: Start and enable kubelet
   service:
     name: kubelet
-    enabled: yes
     state: started
+    enabled: yes
