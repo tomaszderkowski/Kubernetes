@@ -21,10 +21,3 @@
   gather_facts: false
   roles:
     - kubernetes-worker
-
-- name: Install Kubernetes Dasboard
-  hosts: masters
-  gather_facts: false
-  roles:
-    - dashboard
-
