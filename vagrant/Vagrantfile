@@ -14,9 +14,9 @@ Vagrant.configure("2") do |config|
     master.ssh.private_key_path = ["~/.ssh/id_rsa", "~/.vagrant.d/insecure_private_key"]
     master.ssh.insert_key = false
     master.vm.provider "virtualbox" do |vb|
-      hyperv.memory = MEMORY
-      hyperv.vmname = "kubernetes-master"
-      hyperv.cpus = CPU
+      vb.memory = MEMORY
+      vb.vmname = "kubernetes-master"
+      vb.cpus = CPU
     end
   end
 
@@ -30,9 +30,9 @@ Vagrant.configure("2") do |config|
       worker.ssh.private_key_path = ["~/.ssh/id_rsa", "~/.vagrant.d/insecure_private_key"]
       worker.ssh.insert_key = false
       worker.vm.provider "virtualbox" do |vb|
-        hyperv.memory = MEMORY
-        hyperv.vmname = "kubernetes-worker#{i}"
-        hyperv.cpus = CPU
+        vb.memory = MEMORY
+        vb.vmname = "kubernetes-worker#{i}"
+        vb.cpus = CPU
       end
     end
   end
