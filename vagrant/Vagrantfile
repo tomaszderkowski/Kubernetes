@@ -1,20 +1,39 @@
-box_hostname = "kubernetes"
-box_image = "ubuntu/bionic64"
-box_cpu = 2
-box_ram = "4096"
-box_name = "kubernetes"
-box_network_type = "public_network"
-box_ip = "192.168.1.120"
-box_bridge_interface = "wlan0"
+ENV['VAGRANT_PARALLEL'] = 'yes'
 
-Vagrant.configure(2) do |config|
-  config.vm.box = box_image
-  config.vm.hostname = box_hostname
-  config.vm.network box_network_type, ip: box_ip, bridge: box_bridge_interface
-  config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
-  config.vm.provider "virtualbox" do |vb|
-    vb.memory = box_ram
-    vb.cpus = box_cpu
-    vb.name = box_name
+bridge_adapter = "eth0"
+box_image = "centos/7"
+CPU = 2
+MEMORY = 4096
+
+Vagrant.configure("2") do |config|
+    
+  config.vm.define "kubernetes-master" do |master|
+    master.vm.box = box_image
+    master.vm.hostname  = "kubernetes-master"
+    master.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
+    master.ssh.private_key_path = ["~/.ssh/id_rsa", "~/.vagrant.d/insecure_private_key"]
+    master.ssh.insert_key = false
+    master.vm.provider "virtualbox" do |vb|
+      hyperv.memory = MEMORY
+      hyperv.vmname = "kubernetes-master"
+      hyperv.cpus = CPU
+    end
+  end
+
+  NodeCount = 2
+
+  (1..NodeCount).each do |i|
+    config.vm.define "kubernetes-worker#{i}" do |worker|
+      worker.vm.box = box_image
+      worker.vm.hostname = "kubernetes-worker#{i}"
+      worker.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
+      worker.ssh.private_key_path = ["~/.ssh/id_rsa", "~/.vagrant.d/insecure_private_key"]
+      worker.ssh.insert_key = false
+      worker.vm.provider "virtualbox" do |vb|
+        hyperv.memory = MEMORY
+        hyperv.vmname = "kubernetes-worker#{i}"
+        hyperv.cpus = CPU
+      end
+    end
   end
 end
