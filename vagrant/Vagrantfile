@@ -5,6 +5,8 @@ box_image = "centos/7"
 CPU = 2
 MEMORY = 4096
 
+VAGRANT_VM_PROVIDER   = "virtualbox"
+
 Vagrant.configure("2") do |config|
     
   config.vm.define "kubernetes-master" do |master|
