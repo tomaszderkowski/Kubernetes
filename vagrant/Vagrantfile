@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
     master.ssh.insert_key = false
     master.vm.provider "virtualbox" do |vb|
       vb.memory = MEMORY
-      vb.vmname = "kubernetes-master"
+      vb.name = "kubernetes-master"
       vb.cpus = CPU
     end
   end
@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
       worker.ssh.insert_key = false
       worker.vm.provider "virtualbox" do |vb|
         vb.memory = MEMORY
-        vb.vmname = "kubernetes-worker#{i}"
+        vb.name = "kubernetes-worker#{i}"
         vb.cpus = CPU
       end
     end
