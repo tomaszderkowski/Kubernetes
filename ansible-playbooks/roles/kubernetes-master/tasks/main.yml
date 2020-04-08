@@ -10,7 +10,7 @@
 
 - name: Initialize the cluster
   become: yes
-  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=Swap,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,SystemVerification --apiserver-advertise-address={{ hostvars[groups['masters'][0]].ansible_host }}
+  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address={{ hostvars[groups['masters'][0]].ansible_host }}
   args:
     chdir: $HOME
 
@@ -25,7 +25,7 @@
   become: yes
   copy:
     src: /etc/kubernetes/admin.conf
-    dest: $HOME/.kube/config
+    dest: /home/{{ ansible_user }}/.kube/config
     remote_src: yes
     owner: "{{ ansible_user }}"
 

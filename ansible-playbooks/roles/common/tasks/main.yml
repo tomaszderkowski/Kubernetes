@@ -75,13 +75,6 @@
     - swap
     - none
 
-# - name: Enable bridge-nf-call tables
-#   sysctl:
-#     name: "{{ item }}"
-#     state: present
-#     value: 1
-#     reload: yes
-#   with_items:
-#     - net.bridge.bridge-nf-call-iptables
-#     - net.bridge.bridge-nf-call-arptables
-#     - net.bridge.bridge-nf-call-ip6tables
+- name: Restart machines to apply changes
+  reboot:
+    reboot_timeout: 3600

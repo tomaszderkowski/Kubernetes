@@ -16,13 +16,9 @@
     update_cache: true
   vars:
     packages:
-    - kubeadm-1.14.3
-    - kubelet-1.14.3
-    - kubectl-1.14.3
-
-- name: Disable fail SWAP in kubelet
-  become: yes
-  shell: echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/sysconfig/kubelet
+    - kubeadm
+    - kubelet
+    - kubectl
 
 - name: Start and enable kubelet
   service:
