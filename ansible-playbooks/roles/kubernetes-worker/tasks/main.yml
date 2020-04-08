@@ -1,6 +1,6 @@
 ---
 - name: Check if kubeadm was inicialized
-  stat: path=/etc/kubernetes/manifests/kube-apiserver.yaml
+  stat: path=/etc/kubernetes/kubelet.conf
   register: kubeadm_status
 
 - name: Revert kubeadm changes
@@ -9,6 +9,6 @@
   when: kubeadm_status.stat.exists
 
 - name: join cluster
-  shell: "{{ hostvars[groups['masters'][0]].join_command }} --ignore-preflight-errors=Swap,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,SystemVerification"
+  shell: "{{ hostvars[groups['masters'][0]].join_command }}"
   args:
     chdir: $HOME
