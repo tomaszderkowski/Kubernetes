@@ -28,13 +28,15 @@
     - device-mapper-persistent-data
     - lvm2
     - which
+    - python-pip
 
 - name: Change Hostname
   hostname:
     name: "{{ hostname }}"
 
 - name: Check if Firewalld Exists
-  stat: path=/etc/firewalld/firewalld.conf
+  stat: 
+    path: /etc/firewalld/firewalld.conf
   register: service_status
 
 - name: Stop firewall
@@ -74,7 +76,9 @@
   with_items:
     - swap
     - none
+  register: remove_swap
 
 - name: Restart machines to apply changes
   reboot:
     reboot_timeout: 3600
+  when: remove_swap.changed

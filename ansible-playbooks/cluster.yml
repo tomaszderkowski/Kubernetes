@@ -1,10 +1,16 @@
 ---
+- name: Prepare Kubernetes hosts
+  become: yes
+  hosts: all
+  gather_facts: false
+  roles:
+    - common
+
 - name: Prepare Kubernetes nodes
   become: yes
   hosts: cluster
   gather_facts: false
   roles: 
-    - common
     - docker
     - kubernetes
 
@@ -21,3 +27,10 @@
   gather_facts: false
   roles:
     - kubernetes-worker
+
+- name: Configure Persistent Storage
+  become: yes
+  hosts: nfs-share
+  gather_facts: false
+  roles:
+    - nfs-server

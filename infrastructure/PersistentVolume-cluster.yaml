@@ -16,5 +16,5 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   storageClassName: nfs
   nfs:
-    path: /STORAGE/Kubernetes_share
-    server: 192.168.1.46
+    path: /nfs
+    server: 192.168.1.123

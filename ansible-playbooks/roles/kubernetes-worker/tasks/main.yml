@@ -1,6 +1,7 @@
 ---
 - name: Check if kubeadm was inicialized
-  stat: path=/etc/kubernetes/kubelet.conf
+  stat: 
+    path: /etc/kubernetes/kubelet.conf
   register: kubeadm_status
 
 - name: Revert kubeadm changes

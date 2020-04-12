@@ -1,6 +1,7 @@
 ---
 - name: Check if kubeadm was inicialized
-  stat: path=/etc/kubernetes/manifests/kube-apiserver.yaml
+  stat: 
+    path: /etc/kubernetes/manifests/kube-apiserver.yaml
   register: kubeadm_status
 
 - name: Revert kubeadm changes
@@ -43,3 +44,9 @@
   args:
     chdir: $HOME
     creates: pod_network_setup.txt
+
+- name: Get Kubernetes config
+  fetch:
+    src: /home/{{ ansible_user }}/.kube/config
+    dest: ~/.kube/config
+    flat: yes

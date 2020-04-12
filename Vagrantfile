@@ -40,4 +40,18 @@ Vagrant.configure("2") do |config|
       end
     end
   end
+
+  config.vm.define "kubernetes-share" do |share|
+    share.vm.box = box_image
+    share.vm.network "public_network", ip: "192.168.1.12#{NodeCount + 1}", bridge: bridge_adapter
+    share.vm.hostname  = "kubernetes-share"
+    share.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
+    share.ssh.private_key_path = ["~/.ssh/id_rsa", "~/.vagrant.d/insecure_private_key"]
+    share.ssh.insert_key = false
+    share.vm.provider "virtualbox" do |vb|
+      vb.memory = 1024
+      vb.name = "kubernetes-share"
+      vb.cpus = 1
+    end
+  end
 end
