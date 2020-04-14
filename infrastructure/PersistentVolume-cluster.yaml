@@ -7,7 +7,7 @@ provisioner: kubernetes.io/fake-nfs
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv01
+  name: nfs
 spec:
   capacity:
     storage: 10Gi
